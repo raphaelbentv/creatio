@@ -1,5 +1,7 @@
 # Creatio - Application React Moderne
 
+Site de Creatio - Des cours informatifs, pas rébarbatifs.
+
 Une application React moderne avec TypeScript, Vite, Tailwind CSS et une structure complète.
 
 ## 🚀 Tech Stack
@@ -135,4 +137,3 @@ npm run build
 ## 📄 Licence
 
 MIT
-
