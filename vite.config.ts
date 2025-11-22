@@ -5,7 +5,13 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/', // Base path à la racine pour le domaine personnalisé creatio.paris
   plugins: [react()],
+  server: {
+    port: 5007,
+    strictPort: true, // Empêche Vite d'utiliser un autre port si 5007 est occupé
+    host: true, // Permet l'accès depuis le réseau local (iPhone, iPad, etc.)
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

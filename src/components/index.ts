@@ -11,4 +11,6 @@ export { Badge } from './Badge';
 export { Chart } from './Chart';
 export { Icon3D } from './Icon3D';
 export { GraphLine } from './GraphLine';
+export { Modal } from './Modal';
+export { EchantillonModal } from './EchantillonModal';
 

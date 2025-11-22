@@ -1,9 +1,12 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/Button';
 import { Badge } from '@/components/Badge';
+import { EchantillonModal } from '@/components/EchantillonModal';
 
 export const Home = () => {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [isEchantillonModalOpen, setIsEchantillonModalOpen] = useState(false);
 
   const toggleFaq = (index: number) => {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
@@ -12,13 +15,32 @@ export const Home = () => {
     {
       icon: (
         <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="8" y="12" width="48" height="40" rx="4" stroke="#8a5cf6" strokeWidth="2" />
-          <path d="M16 22h32M16 30h32M16 38h24" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" />
+          <rect
+            x="8"
+            y="12"
+            width="48"
+            height="40"
+            rx="4"
+            stroke="#8a5cf6"
+            strokeWidth="2"
+          />
+          <path
+            d="M16 22h32M16 30h32M16 38h24"
+            stroke="#6366f1"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
           <circle cx="48" cy="20" r="8" fill="url(#grad1)" />
           <defs>
             <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style={{ stopColor: '#8a5cf6', stopOpacity: 1 }} />
-              <stop offset="100%" style={{ stopColor: '#6366f1', stopOpacity: 1 }} />
+              <stop
+                offset="0%"
+                style={{ stopColor: '#8a5cf6', stopOpacity: 1 }}
+              />
+              <stop
+                offset="100%"
+                style={{ stopColor: '#6366f1', stopOpacity: 1 }}
+              />
             </linearGradient>
           </defs>
         </svg>
@@ -30,7 +52,15 @@ export const Home = () => {
     {
       icon: (
         <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="10" y="8" width="44" height="32" rx="3" stroke="#8a5cf6" strokeWidth="2" />
+          <rect
+            x="10"
+            y="8"
+            width="44"
+            height="32"
+            rx="3"
+            stroke="#8a5cf6"
+            strokeWidth="2"
+          />
           <rect x="14" y="14" width="12" height="8" fill="#6366f1" />
           <rect x="28" y="14" width="22" height="2" fill="#71717a" />
           <rect x="28" y="18" width="18" height="2" fill="#71717a" />
@@ -45,21 +75,40 @@ export const Home = () => {
           />
           <defs>
             <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" style={{ stopColor: '#8a5cf6', stopOpacity: 1 }} />
-              <stop offset="100%" style={{ stopColor: '#6366f1', stopOpacity: 1 }} />
+              <stop
+                offset="0%"
+                style={{ stopColor: '#8a5cf6', stopOpacity: 1 }}
+              />
+              <stop
+                offset="100%"
+                style={{ stopColor: '#6366f1', stopOpacity: 1 }}
+              />
             </linearGradient>
           </defs>
         </svg>
       ),
       title: 'Création de slides',
       description:
-        'Des slides denses en contenu de cours, exploitables par les intervenants et les étudiants, en format PPT ou PDF pour s\'adapter à tous les types d\'enseignement.',
+        "Des slides denses en contenu de cours, exploitables par les intervenants et les étudiants, en format PPT ou PDF pour s'adapter à tous les types d'enseignement.",
     },
     {
       icon: (
         <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="12" y="8" width="40" height="48" rx="4" stroke="#8a5cf6" strokeWidth="2" />
-          <path d="M20 18h24M20 26h24M20 34h24M20 42h16" stroke="#71717a" strokeWidth="2" strokeLinecap="round" />
+          <rect
+            x="12"
+            y="8"
+            width="40"
+            height="48"
+            rx="4"
+            stroke="#8a5cf6"
+            strokeWidth="2"
+          />
+          <path
+            d="M20 18h24M20 26h24M20 34h24M20 42h16"
+            stroke="#71717a"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
           <circle cx="46" cy="42" r="2" fill="#6366f1" />
           <circle cx="46" cy="34" r="2" fill="#6366f1" />
           <circle cx="46" cy="26" r="2" fill="#8a5cf6" />
@@ -72,8 +121,14 @@ export const Home = () => {
           />
           <defs>
             <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style={{ stopColor: '#8a5cf6', stopOpacity: 1 }} />
-              <stop offset="100%" style={{ stopColor: '#6366f1', stopOpacity: 1 }} />
+              <stop
+                offset="0%"
+                style={{ stopColor: '#8a5cf6', stopOpacity: 1 }}
+              />
+              <stop
+                offset="100%"
+                style={{ stopColor: '#6366f1', stopOpacity: 1 }}
+              />
             </linearGradient>
           </defs>
         </svg>
@@ -110,15 +165,21 @@ export const Home = () => {
           />
           <defs>
             <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style={{ stopColor: '#8a5cf6', stopOpacity: 1 }} />
-              <stop offset="100%" style={{ stopColor: '#6366f1', stopOpacity: 1 }} />
+              <stop
+                offset="0%"
+                style={{ stopColor: '#8a5cf6', stopOpacity: 1 }}
+              />
+              <stop
+                offset="100%"
+                style={{ stopColor: '#6366f1', stopOpacity: 1 }}
+              />
             </linearGradient>
           </defs>
         </svg>
       ),
       title: 'Mise à jour annuelle',
       description:
-        'En option, nous proposons des mises à jour annuelles des programmes, en cas de besoins évolutifs ou d\'ajouts nécessaires.',
+        "En option, nous proposons des mises à jour annuelles des programmes, en cas de besoins évolutifs ou d'ajouts nécessaires.",
     },
   ];
 
@@ -133,7 +194,11 @@ export const Home = () => {
     {
       icon: (
         <svg viewBox="0 0 24 24" fill="none" stroke="#8a5cf6" strokeWidth="2">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       ),
       title: 'Gain de temps',
@@ -166,7 +231,7 @@ export const Home = () => {
       ),
       title: 'Qualité optimale',
       description:
-        'Garantissez à vos étudiants un socle clair, complet et réutilisable pour suivre les cours et réviser efficacement tout au long de l\'année.',
+        "Garantissez à vos étudiants un socle clair, complet et réutilisable pour suivre les cours et réviser efficacement tout au long de l'année.",
     },
     {
       icon: (
@@ -194,7 +259,7 @@ export const Home = () => {
       ),
       title: 'Structuration modulaire',
       description:
-        'Chaque module est conçu de façon logique, progressive et modulaire pour une meilleure expérience d\'apprentissage.',
+        "Chaque module est conçu de façon logique, progressive et modulaire pour une meilleure expérience d'apprentissage.",
     },
     {
       icon: (
@@ -218,7 +283,11 @@ export const Home = () => {
             strokeLinecap="round"
             strokeLinejoin="round"
           />
-          <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </svg>
       ),
       title: 'Base de travail adaptable',
@@ -237,7 +306,7 @@ export const Home = () => {
       ),
       title: "Garantissez l'homogénéité",
       description:
-        'Chaque étudiant bénéficie du même niveau d\'exigence et de clarté, quel que soit le formateur ou le lieu.',
+        "Chaque étudiant bénéficie du même niveau d'exigence et de clarté, quel que soit le formateur ou le lieu.",
     },
     {
       icon: (
@@ -258,19 +327,19 @@ export const Home = () => {
   const testimonials = [
     {
       quote:
-        '« C\'est un budget, mais on y gagne sur tous les plans : moins de bricolage côté intervenants, des contenus solides, et surtout une vraie différence dans la manière dont les étudiants s\'approprient les cours. »',
+        "« C'est un budget, mais on y gagne sur tous les plans : moins de bricolage côté intervenants, des contenus solides, et surtout une vraie différence dans la manière dont les étudiants s'approprient les cours. »",
       author: 'Eric',
       role: 'Responsable pédagogique',
     },
     {
       quote:
-        '« On s\'est rendu compte que les étudiants n\'avaient parfois que des bribes de cours ou des notes peu exploitables. Ce format comble vraiment ce manque. »',
+        "« On s'est rendu compte que les étudiants n'avaient parfois que des bribes de cours ou des notes peu exploitables. Ce format comble vraiment ce manque. »",
       author: 'Corrine',
       role: 'Chargée de coordination',
     },
     {
       quote:
-        '« Au départ, on a hésité à externaliser, mais aujourd\'hui, je ne reviendrais pas en arrière. Le niveau des supports a un vrai impact sur la qualité du suivi pédagogique. »',
+        "« Au départ, on a hésité à externaliser, mais aujourd'hui, je ne reviendrais pas en arrière. Le niveau des supports a un vrai impact sur la qualité du suivi pédagogique. »",
       author: 'Claire',
       role: 'Directrice de programme',
     },
@@ -291,32 +360,32 @@ export const Home = () => {
     {
       question: 'Les supports sont-ils modifiables ?',
       answer:
-        'Oui, tous les supports sont livrés en format PowerPoint modifiable. Vous gardez la liberté d\'ajuster, ajouter ou simplifier selon vos préférences.',
+        "Oui, tous les supports sont livrés en format PowerPoint modifiable. Vous gardez la liberté d'ajuster, ajouter ou simplifier selon vos préférences.",
     },
     {
       question: 'Faut-il adapter les supports à chaque formateur ?',
       answer:
-        'Absolument. Les supports sont conçus pour être directement exploitables, tout en laissant la possibilité à chaque formateur d\'adapter son animation pédagogique.',
+        "Absolument. Les supports sont conçus pour être directement exploitables, tout en laissant la possibilité à chaque formateur d'adapter son animation pédagogique.",
     },
     {
       question: 'Les supports répondent-ils aux critères Qualiopi ?',
       answer:
-        'Oui. Chaque module est structuré avec des objectifs pédagogiques clairs, une logique de progression, et des contenus exploitables en cas d\'audit.',
+        "Oui. Chaque module est structuré avec des objectifs pédagogiques clairs, une logique de progression, et des contenus exploitables en cas d'audit.",
     },
     {
       question: 'Peut-on créer un programme entier de zéro ?',
       answer:
-        'Oui. Nous pouvons concevoir la structure et le contenu intégral d\'un nouveau programme, sur la base de vos orientations pédagogiques et de vos objectifs institutionnels.',
+        "Oui. Nous pouvons concevoir la structure et le contenu intégral d'un nouveau programme, sur la base de vos orientations pédagogiques et de vos objectifs institutionnels.",
     },
     {
       question: 'Proposez-vous un échantillon gratuit ?',
       answer:
-        'Oui. Nous proposons l\'envoi d\'un extrait gratuit de slides (PDF) pour vous permettre d\'évaluer notre approche et notre rendu.',
+        "Oui. Nous proposons l'envoi d'un extrait gratuit de slides (PDF) pour vous permettre d'évaluer notre approche et notre rendu.",
     },
     {
       question: 'Comment garantir la mise à jour des contenus ?',
       answer:
-        'Nous proposons une actualisation annuelle des contenus livrés, sur demande ou dans le cadre d\'un partenariat régulier.',
+        "Nous proposons une actualisation annuelle des contenus livrés, sur demande ou dans le cadre d'un partenariat régulier.",
     },
   ];
 
@@ -325,21 +394,28 @@ export const Home = () => {
       {/* Hero Section */}
       <section className="hero-section">
         <div className="relative z-10">
-          <Badge className="mb-6">Solutions pédagogiques nouvelle génération</Badge>
+          <Badge className="mb-6">
+            Solutions pédagogiques nouvelle génération
+          </Badge>
           <h1 className="hero-title">
             Vos cours, prêts.
             <br />
             Vos apprenants, engagés.
           </h1>
           <p className="hero-subtitle">
-            De la structuration d'un programme à l'élaboration des slides de cours, libérez vos
-            ressources internes et garantissez une qualité optimale.
+            De la structuration d'un programme à l'élaboration des slides de
+            cours, libérez vos ressources internes et garantissez une qualité
+            optimale.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Button variant="primary" size="lg">
               Découvrir nos services
             </Button>
-            <Button variant="outline" size="lg">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => setIsEchantillonModalOpen(true)}
+            >
               Demander un échantillon
             </Button>
           </div>
@@ -351,7 +427,8 @@ export const Home = () => {
         <div className="max-w-[1400px] mx-auto px-10 max-md:px-5">
           <h2 className="section-title">Nos Services</h2>
           <p className="section-subtitle">
-            Des solutions complètes pour créer des contenus pédagogiques de qualité professionnelle
+            Des solutions complètes pour créer des contenus pédagogiques de
+            qualité professionnelle
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-15">
@@ -384,7 +461,9 @@ export const Home = () => {
       <section className="section" id="avantages">
         <div className="max-w-[1400px] mx-auto px-10 max-md:px-5">
           <h2 className="section-title">Les Points Forts</h2>
-          <p className="section-subtitle">Pourquoi choisir Creatio pour vos supports pédagogiques</p>
+          <p className="section-subtitle">
+            Pourquoi choisir Creatio pour vos supports pédagogiques
+          </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
@@ -404,7 +483,9 @@ export const Home = () => {
       <section className="section">
         <div className="max-w-[1400px] mx-auto px-10 max-md:px-5">
           <h2 className="section-title">Témoignages</h2>
-          <p className="section-subtitle">Ce que disent nos clients et utilisateurs</p>
+          <p className="section-subtitle">
+            Ce que disent nos clients et utilisateurs
+          </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {testimonials.map((testimonial, index) => (
@@ -422,7 +503,9 @@ export const Home = () => {
       <section className="section" id="faq">
         <div className="max-w-[1400px] mx-auto px-10 max-md:px-5">
           <h2 className="section-title">Questions Fréquentes</h2>
-          <p className="section-subtitle">Tout ce que vous devez savoir sur nos services</p>
+          <p className="section-subtitle">
+            Tout ce que vous devez savoir sur nos services
+          </p>
 
           <div className="max-w-[900px] mx-auto">
             {faqs.map((faq, index) => {
@@ -450,7 +533,9 @@ export const Home = () => {
                       <path d="M6 9l6 6 6-6" />
                     </svg>
                   </div>
-                  <div className={`faq-answer ${isOpen ? 'faq-answer-open' : ''}`}>
+                  <div
+                    className={`faq-answer ${isOpen ? 'faq-answer-open' : ''}`}
+                  >
                     {faq.answer}
                   </div>
                 </div>
@@ -464,22 +549,37 @@ export const Home = () => {
       <section className="section" id="echantillon">
         <div className="max-w-[1400px] mx-auto px-10 max-md:px-5">
           <div className="cta-section">
-            <h2 className="cta-title">Prêt à transformer vos contenus pédagogiques ?</h2>
+            <h2 className="cta-title">
+              Prêt à transformer vos contenus pédagogiques ?
+            </h2>
             <p className="cta-description">
-              Demandez un échantillon gratuit et découvrez la qualité de nos supports. Indiquez-nous
-              quelques éléments, et nous vous enverrons un extrait adapté à vos besoins.
+              Demandez un échantillon gratuit et découvrez la qualité de nos
+              supports. Indiquez-nous quelques éléments, et nous vous enverrons
+              un extrait adapté à vos besoins.
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
-              <Button variant="primary" size="lg">
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => setIsEchantillonModalOpen(true)}
+              >
                 Demander un échantillon
               </Button>
-              <Button variant="outline" size="lg">
-                Programmer un call
-              </Button>
+              <Link to="/contact">
+                <Button variant="outline" size="lg">
+                  Programmer un call
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Modal d'échantillon */}
+      <EchantillonModal
+        isOpen={isEchantillonModalOpen}
+        onClose={() => setIsEchantillonModalOpen(false)}
+      />
     </>
   );
 };
