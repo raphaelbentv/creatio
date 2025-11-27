@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import emailjs from '@emailjs/browser';
 import { Button } from '@/components/Button';
 import { Badge } from '@/components/Badge';
 import { Link } from 'react-router-dom';
@@ -13,10 +14,62 @@ export const Contact = () => {
     subject: 'demande-info',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Formulaire soumis:', formData);
-    // Ici vous pouvez ajouter la logique d'envoi du formulaire
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Configuration EmailJS - À configurer avec vos clés
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || '';
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || '';
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || '';
+
+      // Si les clés ne sont pas configurées, on utilise le mode simulation
+      if (!serviceId || !templateId || !publicKey) {
+        console.warn('EmailJS non configuré - Mode simulation activé');
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        console.log('Message de contact soumis (simulation):', formData);
+      } else {
+        // Envoi réel via EmailJS
+        const templateParams = {
+          from_name: formData.name,
+          from_email: formData.email,
+          phone: formData.phone || 'Non renseigné',
+          organization: formData.organization || 'Non renseigné',
+          subject: formData.subject,
+          message: formData.message,
+          to_email: 'contact@creatio.paris',
+        };
+
+        await emailjs.send(serviceId, templateId, templateParams, publicKey);
+      }
+
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+
+      // Réinitialiser le formulaire après 3 secondes
+      setTimeout(() => {
+        setIsSubmitted(false);
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          organization: '',
+          message: '',
+          subject: 'demande-info',
+        });
+      }, 3000);
+
+    } catch (err) {
+      setIsSubmitting(false);
+      setError('Une erreur s\'est produite lors de l\'envoi. Veuillez réessayer.');
+      console.error('Erreur lors de l\'envoi du formulaire:', err);
+    }
   };
 
   const handleChange = (
@@ -26,6 +79,10 @@ export const Contact = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleContactClick = (link: string) => {
+    window.location.href = link;
   };
 
   const contactInfo = [
@@ -56,8 +113,8 @@ export const Contact = () => {
         </svg>
       ),
       title: 'Téléphone',
-      content: '+33 1 XX XX XX XX',
-      link: 'tel:+331XXXXXXXXX',
+      content: '+33 6 76 11 39 47',
+      link: 'tel:+33676113947',
       description: 'Appelez-nous du lundi au vendredi',
     },
     {
@@ -72,7 +129,7 @@ export const Contact = () => {
         </svg>
       ),
       title: 'Adresse',
-      content: 'Paris, France',
+      content: '60 rue Francois 1er 75008 Paris',
       link: '#',
       description: 'Notre siège social',
     },
@@ -143,16 +200,17 @@ export const Contact = () => {
         {/* Contact Info Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           {contactInfo.map((info, index) => (
-            <div key={index} className="service-card">
+            <div
+              key={index}
+              className="service-card cursor-pointer"
+              onClick={() => handleContactClick(info.link)}
+            >
               <div className="service-icon">{info.icon}</div>
               <h3 className="service-title">{info.title}</h3>
               <p className="service-description mb-4">{info.description}</p>
-              <a
-                href={info.link}
-                className="text-[#8a5cf6] hover:text-[#a78bfa] transition-colors font-semibold"
-              >
+              <div className="text-[#8a5cf6] hover:text-[#a78bfa] transition-colors font-semibold">
                 {info.content}
-              </a>
+              </div>
             </div>
           ))}
         </div>
@@ -271,8 +329,26 @@ export const Contact = () => {
                   />
                 </div>
 
-                <Button type="submit" variant="primary" size="lg" className="w-full">
-                  Envoyer le message
+                {error && (
+                  <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm">
+                    {error}
+                  </div>
+                )}
+
+                {isSubmitted && (
+                  <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl text-green-400 text-sm">
+                    ✅ Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.
+                  </div>
+                )}
+
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="lg"
+                  className="w-full"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Envoi en cours...' : 'Envoyer le message'}
                 </Button>
               </form>
             </div>
