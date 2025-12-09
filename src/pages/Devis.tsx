@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/Button';
 import { Card, CardHeader } from '@/components/Card';
 import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface DevisOptions {
   typeService: 'programme' | 'slides' | 'evaluation' | 'complet';
@@ -125,6 +126,35 @@ export const Devis = () => {
       montant: number;
     }>
   >([]);
+  const devisCardRef = useRef<HTMLDivElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const [moduleNames, setModuleNames] = useState<string[]>(['Module 1']);
+
+  useEffect(() => {
+    setModuleNames(prev => {
+      const count = Math.max(
+        options.nombreModules,
+        options.nombreModulesHeures
+      );
+      const next = [...prev];
+      if (count > prev.length) {
+        for (let i = prev.length; i < count; i += 1) {
+          next.push(`Module ${i + 1}`);
+        }
+      } else if (count < prev.length) {
+        next.splice(count);
+      }
+      return next;
+    });
+  }, [options.nombreModules, options.nombreModulesHeures]);
+
+  const handleModuleNameChange = (index: number, value: string) => {
+    setModuleNames(prev => {
+      const next = [...prev];
+      next[index] = value;
+      return next;
+    });
+  };
 
   const handleChange = (
     field: keyof DevisOptions,
@@ -133,557 +163,47 @@ export const Devis = () => {
     setOptions(prev => ({ ...prev, [field]: value }));
   };
 
-  const genererPDF = () => {
-    const doc = new jsPDF();
-    const pageWidth = 595.27; // A4 width in points
-    const pageHeight = 841.89; // A4 height in points
-    const marginLeft = 40;
-    const marginRight = pageWidth - 40;
-    const centerX = pageWidth / 2;
+  const genererPDF = async () => {
+    if (!devisCardRef.current) return;
+    setIsExporting(true);
 
-    // Couleurs
-    const colors = {
-      background: [9, 9, 11], // #09090b
-      backgroundSecondary: [15, 15, 18], // #0f0f12
-      violet: [138, 92, 246], // #8a5cf6
-      blue: [99, 102, 241], // #6366f1
-      white: [255, 255, 255],
-      gray: [113, 113, 122], // #71717a
-      borderDark: [24, 24, 27], // #18181b
-    };
+    // Laisse le temps au DOM d'appliquer les styles d'export (masquage des boutons, padding)
+    await new Promise(resolve => requestAnimationFrame(() => resolve(null)));
 
-    // Calculs des montants
-    const tva = Math.floor(devisCalcule - devisHT);
-    const remiseHT = Math.floor(devisHT * 0.85 * 100) / 100;
-    const remiseTTC = Math.floor(remiseHT * 1.2 * 100) / 100;
-
-    // Échéances : toujours basées sur le montant HT normal (sans remise)
-    // car la remise ne s'applique qu'au paiement comptant
-    const echeances = {
-      '4': {
-        ht: Math.floor((devisHT / 4) * 100) / 100,
-        ttc: Math.floor((devisCalcule / 4) * 100) / 100,
-      },
-      '6': {
-        ht: Math.floor((devisHT / 6) * 100) / 100,
-        ttc: Math.floor((devisCalcule / 6) * 100) / 100,
-      },
-      '10': {
-        ht: Math.floor((devisHT / 10) * 100) / 100,
-        ttc: Math.floor((devisCalcule / 10) * 100) / 100,
-      },
-    };
-
-    // Date formatée
-    const dateFormatted = new Date().toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
+    const canvas = await html2canvas(devisCardRef.current, {
+      scale: 2, // meilleure résolution
+      backgroundColor: '#09090b',
+      useCORS: true,
+      logging: false,
     });
 
-    // Fonction helper pour formater les nombres
-    const formatNumber = (num: number) => {
-      return num.toLocaleString('fr-FR', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      });
-    };
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('p', 'pt', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
 
-    // Fonction helper pour dessiner une ligne
-    const drawLine = (
-      x1: number,
-      y1: number,
-      x2: number,
-      y2: number,
-      color: number[],
-      width: number = 1
-    ) => {
-      doc.setDrawColor(color[0], color[1], color[2]);
-      doc.setLineWidth(width);
-      doc.line(x1, y1, x2, y2);
-    };
+    const imgWidth = canvas.width;
+    const imgHeight = canvas.height;
+    const ratio = Math.min(pageWidth / imgWidth, (pageHeight - 40) / imgHeight);
+    const finalWidth = imgWidth * ratio;
+    const finalHeight = imgHeight * ratio;
+    const offsetX = (pageWidth - finalWidth) / 2;
+    const offsetY = 20;
 
-    // Fonction helper pour dessiner un rectangle arrondi
-    const drawRoundedRect = (
-      x: number,
-      y: number,
-      w: number,
-      h: number,
-      r: number,
-      fillColor?: number[],
-      strokeColor?: number[],
-      strokeWidth?: number
-    ) => {
-      if (fillColor) {
-        doc.setFillColor(fillColor[0], fillColor[1], fillColor[2]);
-        doc.roundedRect(x, y, w, h, r, r, 'F');
-      }
-      if (strokeColor) {
-        doc.setDrawColor(strokeColor[0], strokeColor[1], strokeColor[2]);
-        doc.setLineWidth(strokeWidth || 1);
-        doc.roundedRect(x, y, w, h, r, r, 'S');
-      }
-    };
-
-    // ========== PAGE 1 ==========
-    doc.setFillColor(
-      colors.background[0],
-      colors.background[1],
-      colors.background[2]
-    );
-    doc.rect(0, 0, pageWidth, pageHeight, 'F');
-
-    let y = 60; // Position verticale depuis le haut
-
-    // Header avec bordure violette
-    drawLine(0, y, pageWidth, y, colors.violet, 3);
-    y += 20;
-
-    // Logo et date
-    doc.setFontSize(32);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(colors.violet[0], colors.violet[1], colors.violet[2]);
-    doc.text('CREATIO', marginLeft, y);
-    y += 12;
-
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2]);
-    doc.text('by Venio', marginLeft, y);
-    y += 8;
-
-    doc.setFontSize(9);
-    doc.text(`Date: ${dateFormatted}`, marginRight, y - 20, { align: 'right' });
-    y += 10;
-
-    // Ligne de séparation
-    drawLine(marginLeft, y, marginRight, y, colors.borderDark, 1);
-    y += 30;
-
-    // Titre principal
-    doc.setFontSize(28);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
-    doc.text('Votre Devis', marginLeft, y);
-    y += 40;
-
-    // Card montant principal
-    const cardWidth = pageWidth - marginLeft * 2;
-    const cardHeight = 100;
-    const cardX = marginLeft;
-    const cardY = y;
-
-    drawRoundedRect(
-      cardX,
-      cardY,
-      cardWidth,
-      cardHeight,
-      12,
-      colors.backgroundSecondary,
-      colors.violet,
-      1.5
+    pdf.addImage(
+      imgData,
+      'PNG',
+      offsetX,
+      offsetY,
+      finalWidth,
+      finalHeight,
+      undefined,
+      'FAST'
     );
 
-    y += 28;
+    pdf.save(`devis-creatio-${new Date().toISOString().split('T')[0]}.pdf`);
 
-    // Montant HT
-    doc.setFontSize(48);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
-    const montantHTText = `${formatNumber(devisHT)}€`;
-    doc.text(montantHTText, cardX + 28, y);
-
-    // "HT" à droite
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2]);
-    doc.text('HT', cardX + cardWidth - 28, y, { align: 'right' });
-
-    y += 20;
-
-    // Montant TTC
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(colors.violet[0], colors.violet[1], colors.violet[2]);
-    doc.text(`${formatNumber(devisCalcule)}€ TTC`, cardX + 28, y);
-
-    y = cardY + cardHeight + 30;
-
-    // Section calcul
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
-    doc.text('Calcul en temps réel', marginLeft, y);
-    y += 20;
-
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2]);
-    doc.text(
-      `Heures de cours : ${options.nombreHeures}h (${nombreSlides} slides)`,
-      marginLeft,
-      y
-    );
-    y += 40;
-
-    // Tableau des paliers
-    if (detailsPaliers.length > 0) {
-      const tableX = marginLeft;
-      const tableY = y;
-      const col1Width = 120;
-      const col2Width = 150;
-      const col3Width = 120;
-      const rowHeight = 24;
-      const cellPadding = 15;
-
-      // En-tête du tableau
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
-
-      // Colonne 1: PALIER
-      doc.text('PALIER', tableX + cellPadding, tableY + 8);
-      // Colonne 2: CALCUL
-      doc.text('CALCUL', tableX + col1Width + cellPadding, tableY + 8);
-      // Colonne 3: MONTANT
-      doc.text(
-        'MONTANT',
-        tableX + col1Width + col2Width + col3Width - cellPadding,
-        tableY + 8,
-        { align: 'right' }
-      );
-
-      // Ligne de séparation en-tête
-      drawLine(
-        tableX,
-        tableY + 12,
-        tableX + col1Width + col2Width + col3Width,
-        tableY + 12,
-        colors.borderDark,
-        1
-      );
-
-      y = tableY + rowHeight;
-
-      // Lignes du tableau
-      detailsPaliers.forEach((detail, index) => {
-        // Background alterné (couleur plus claire pour simuler l'opacité)
-        if (index % 2 === 0) {
-          const bgColor = [
-            Math.min(255, colors.backgroundSecondary[0] + 3),
-            Math.min(255, colors.backgroundSecondary[1] + 3),
-            Math.min(255, colors.backgroundSecondary[2] + 3),
-          ];
-          doc.setFillColor(bgColor[0], bgColor[1], bgColor[2]);
-          doc.rect(
-            tableX,
-            y - rowHeight,
-            col1Width + col2Width + col3Width,
-            rowHeight,
-            'F'
-          );
-        }
-
-        // Colonne 1: Range
-        doc.setFontSize(11);
-        doc.setFont('helvetica', 'normal');
-        doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
-        doc.text(detail.palier, tableX + cellPadding, y - 8);
-
-        // Colonne 2: Calcul
-        doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2]);
-        doc.text(
-          `${detail.quantite} × ${detail.prixUnitaire}€`,
-          tableX + col1Width + cellPadding,
-          y - 8
-        );
-
-        // Colonne 3: Montant
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(colors.violet[0], colors.violet[1], colors.violet[2]);
-        doc.text(
-          `${formatNumber(detail.montant)}€`,
-          tableX + col1Width + col2Width + col3Width - cellPadding,
-          y - 8,
-          { align: 'right' }
-        );
-
-        y += rowHeight;
-      });
-    }
-
-    y += 20;
-
-    // Ligne de séparation violette
-    drawLine(marginLeft, y, marginRight, y, colors.violet, 1);
-    y += 15;
-
-    // Options supplémentaires
-    if (options.format === 'les-deux') {
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
-      doc.text('Format double', marginLeft, y);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(colors.violet[0], colors.violet[1], colors.violet[2]);
-      doc.text('+10%', marginRight, y, { align: 'right' });
-      y += 15;
-    }
-
-    if (options.urgence !== 'standard') {
-      const urgenceLabels: Record<string, string> = {
-        express: '+25%',
-        urgent: '+50%',
-      };
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
-      doc.text(`Délai ${options.urgence}`, marginLeft, y);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(colors.violet[0], colors.violet[1], colors.violet[2]);
-      doc.text(urgenceLabels[options.urgence] || '', marginRight, y, {
-        align: 'right',
-      });
-      y += 15;
-    }
-
-    if (options.miseAJourAnnuelle) {
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
-      doc.text('Mise à jour annuelle', marginLeft, y);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(colors.violet[0], colors.violet[1], colors.violet[2]);
-      doc.text('+20%', marginRight, y, { align: 'right' });
-      y += 15;
-    }
-
-    // Ligne de séparation grise
-    drawLine(marginLeft, y, marginRight, y, colors.borderDark, 1);
-    y += 20;
-
-    // Totaux
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
-    doc.text('Total HT', marginLeft, y);
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(colors.violet[0], colors.violet[1], colors.violet[2]);
-    doc.text(`${formatNumber(devisHT)}€`, marginRight, y, { align: 'right' });
-    y += 12;
-
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2]);
-    doc.text('TVA (20%)', marginLeft, y);
-    doc.text(`${formatNumber(tva)}€`, marginRight, y, { align: 'right' });
-
-    // ========== PAGE 2 ==========
-    doc.addPage();
-
-    // Background
-    doc.setFillColor(
-      colors.background[0],
-      colors.background[1],
-      colors.background[2]
-    );
-    doc.rect(0, 0, pageWidth, pageHeight, 'F');
-
-    y = 60;
-
-    // Header simplifié
-    drawLine(0, y, pageWidth, y, colors.violet, 3);
-    y += 20;
-
-    doc.setFontSize(20);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(colors.violet[0], colors.violet[1], colors.violet[2]);
-    doc.text('CREATIO', marginLeft, y);
-    y += 50;
-
-    // Section remise
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
-    doc.text('Remise conditionnelle', marginLeft, y);
-    y += 20;
-
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2]);
-    const remiseText =
-      'En cas de règlement en une seule fois à la signature, une remise de 15% est appliquée sur le montant HT global.';
-    const remiseLines = doc.splitTextToSize(remiseText, cardWidth - 56);
-    doc.text(remiseLines, marginLeft, y);
-    y += remiseLines.length * 6 + 20;
-
-    // Card montant avec remise
-    const remiseCardWidth = cardWidth;
-    const remiseCardHeight = 100;
-    const remiseCardX = marginLeft;
-    const remiseCardY = y;
-
-    drawRoundedRect(
-      remiseCardX,
-      remiseCardY,
-      remiseCardWidth,
-      remiseCardHeight,
-      12,
-      colors.backgroundSecondary,
-      colors.violet,
-      1.5
-    );
-
-    y += 32;
-
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
-    doc.text('Montant avec remise :', remiseCardX + 32, y);
-    y += 20;
-
-    doc.setFontSize(32);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(colors.violet[0], colors.violet[1], colors.violet[2]);
-    doc.text(`${formatNumber(remiseHT)}€`, remiseCardX + 32, y);
-
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2]);
-    doc.text('HT', remiseCardX + remiseCardWidth - 32, y, { align: 'right' });
-    y += 15;
-
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2]);
-    doc.text(`(${formatNumber(remiseTTC)}€ TTC)`, centerX, y, {
-      align: 'center',
-    });
-
-    y = remiseCardY + remiseCardHeight + 50;
-
-    // Calendrier d'échéances
-    doc.setFontSize(16);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
-    doc.text("Calendrier d'échéances", marginLeft, y);
-    y += 30;
-
-    const cardWidthEcheance = (pageWidth - marginLeft * 2 - 40) / 3;
-    const cardHeightEcheance = 100;
-    const cardSpacing = 20;
-
-    const echeancesData = [
-      { mois: '4', data: echeances['4'] },
-      { mois: '6', data: echeances['6'] },
-      { mois: '10', data: echeances['10'] },
-    ];
-
-    echeancesData.forEach((echeance, index) => {
-      const cardX = marginLeft + index * (cardWidthEcheance + cardSpacing);
-      const cardY = y;
-
-      // Card échéance
-      drawRoundedRect(
-        cardX,
-        cardY,
-        cardWidthEcheance,
-        cardHeightEcheance,
-        10,
-        colors.backgroundSecondary,
-        colors.borderDark,
-        1
-      );
-
-      // Mois
-      doc.setFontSize(16);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(colors.violet[0], colors.violet[1], colors.violet[2]);
-      doc.text(
-        `${echeance.mois} mois`,
-        cardX + cardWidthEcheance / 2,
-        cardY + 25,
-        { align: 'center' }
-      );
-
-      // Montant HT
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
-      doc.text(
-        `${formatNumber(echeance.data.ht)}€ HT/mois`,
-        cardX + cardWidthEcheance / 2,
-        cardY + 45,
-        { align: 'center' }
-      );
-
-      // Montant TTC
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'normal');
-      doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2]);
-      doc.text(
-        `(${formatNumber(echeance.data.ttc)}€ TTC/mois)`,
-        cardX + cardWidthEcheance / 2,
-        cardY + 60,
-        { align: 'center' }
-      );
-    });
-
-    y += cardHeightEcheance + 50;
-
-    // Modalités TVA
-    doc.setFontSize(14);
-    doc.setFont('helvetica', 'bold');
-    doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
-    doc.text('Modalités TVA', marginLeft, y);
-    y += 20;
-
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2]);
-    doc.text(
-      '• Chaque facture mensuelle comprend la TVA légale (20%).',
-      marginLeft,
-      y
-    );
-    y += 12;
-
-    const modaliteText =
-      "• La remise de 15% s'applique uniquement sur la base HT avant calcul de la TVA.";
-    const modaliteLines = doc.splitTextToSize(modaliteText, cardWidth - 56);
-    doc.text(modaliteLines, marginLeft, y);
-
-    // Footer
-    y = pageHeight - 60;
-    drawLine(marginLeft, y, marginRight, y, colors.borderDark, 1);
-    y += 15;
-
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2]);
-    doc.text(
-      'Creatio by Venio • Solutions pédagogiques nouvelle génération',
-      centerX,
-      y,
-      { align: 'center' }
-    );
-    y += 8;
-    doc.text('creatio.paris • contact@venio.fr', centerX, y, {
-      align: 'center',
-    });
-
-    // Métadonnées PDF
-    doc.setProperties({
-      title: `Devis Creatio - ${formatNumber(devisHT)}€`,
-      subject: 'Devis personnalisé - Solutions pédagogiques',
-      author: 'Creatio by Venio',
-      creator: 'Creatio Quote Generator',
-      keywords: 'devis, formation, pédagogie, creatio',
-    });
-
-    // Télécharger le PDF
-    doc.save(`devis-creatio-${new Date().toISOString().split('T')[0]}.pdf`);
+    setIsExporting(false);
   };
 
   // Scroll vers le haut de la page au chargement
@@ -1115,6 +635,37 @@ export const Devis = () => {
                             ({Math.round(heuresParModule * 5)} slides par
                             module)
                           </div>
+                          <div className="pt-2 border-t border-white/5 space-y-1">
+                            <div className="text-white/80 font-semibold">
+                              Noms des modules
+                            </div>
+                            <div className="space-y-1">
+                              {Array.from({
+                                length: options.nombreModulesHeures,
+                              }).map((_, idx) => (
+                                <div
+                                  key={idx}
+                                  className="flex items-center gap-2"
+                                >
+                                  <span className="text-[#71717a] w-16">
+                                    Module {idx + 1}
+                                  </span>
+                                  <input
+                                    type="text"
+                                    value={moduleNames[idx] || ''}
+                                    onChange={e =>
+                                      handleModuleNameChange(
+                                        idx,
+                                        e.target.value
+                                      )
+                                    }
+                                    className="flex-1 px-3 py-2 bg-[#0f0f12] border border-white/10 rounded-lg text-white text-xs focus:outline-none focus:border-[#8a5cf6] transition-colors"
+                                    placeholder={`Nom du module ${idx + 1}`}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -1181,6 +732,31 @@ export const Devis = () => {
                   </div>
                   <div className="text-sm text-[#71717a]">
                     Prix unitaire : {tarifs.module}€ par module
+                  </div>
+
+                  {/* Noms des modules */}
+                  <div className="pt-4 border-t border-white/10">
+                    <label className="block text-white/80 text-sm mb-3">
+                      Noms des modules
+                    </label>
+                    <div className="space-y-2">
+                      {moduleNames.map((name, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          <span className="text-xs text-[#71717a] w-16">
+                            Module {idx + 1}
+                          </span>
+                          <input
+                            type="text"
+                            value={name}
+                            onChange={e =>
+                              handleModuleNameChange(idx, e.target.value)
+                            }
+                            className="flex-1 px-3 py-2 bg-[#0f0f12] border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-[#8a5cf6] transition-colors"
+                            placeholder={`Nom du module ${idx + 1}`}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -1335,7 +911,11 @@ export const Devis = () => {
 
           {/* Résultat du devis */}
           <div className="lg:col-span-1">
-            <div className="card-gradient rounded-3xl p-6 border border-white/6 transition-all duration-400 sticky top-0 w-full overflow-hidden shadow-[0_2px_16px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.03)] hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(138,92,246,0.15),0_4px_12px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-[rgba(138,92,246,0.25)]">
+            <div
+              ref={devisCardRef}
+              className="card-gradient rounded-3xl p-6 border border-white/6 transition-all duration-400 sticky top-0 w-full overflow-hidden shadow-[0_2px_16px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.03)] hover:-translate-y-1 hover:shadow-[0_16px_32px_rgba(138,92,246,0.15),0_4px_12px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.06)] hover:border-[rgba(138,92,246,0.25)]"
+              style={isExporting ? { paddingTop: '32px' } : undefined}
+            >
               <div className="absolute top-0 left-0 right-0 bottom-0 rounded-3xl p-px bg-gradient-to-br from-[rgba(138,92,246,0.3)] via-[rgba(99,102,241,0.15)] to-transparent opacity-0 hover:opacity-100 transition-opacity duration-400 -z-10"></div>
               <div
                 className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] opacity-0 hover:opacity-100 transition-opacity duration-400 -z-10"
@@ -1354,7 +934,7 @@ export const Devis = () => {
                         HT
                       </span>
                     </div>
-                    <div className="text-[#71717a] text-xs mb-1">
+                    <div className="text-[#71717a] text-xs mt-3 mb-1">
                       TTC : {devisCalcule.toLocaleString('fr-FR')}€
                     </div>
                     <div className="text-[#8a5cf6] text-xs mt-2 font-bold animate-pulse">
@@ -1380,6 +960,27 @@ export const Devis = () => {
                             Réparti en {options.nombreModulesHeures} module
                             {options.nombreModulesHeures > 1 ? 's' : ''} :{' '}
                             {heuresParModule}h par module
+                          </div>
+                        )}
+                        {moduleNames.length > 0 && (
+                          <div className="text-xs text-white/70 pl-3 mt-1 space-y-1">
+                            {moduleNames
+                              .slice(
+                                0,
+                                Math.max(
+                                  options.nombreModulesHeures,
+                                  options.nombreModules
+                                )
+                              )
+                              .map((name, idx) => (
+                                <div
+                                  key={idx}
+                                  className="flex gap-2 items-center"
+                                >
+                                  <span className="text-[#71717a]">•</span>
+                                  <span>{name || `Module ${idx + 1}`}</span>
+                                </div>
+                              ))}
                           </div>
                         )}
                       </div>
@@ -1422,6 +1023,22 @@ export const Devis = () => {
                             ).toLocaleString('fr-FR')}
                             €
                           </span>
+                        </div>
+                      )}
+                    {(options.typeService === 'programme' ||
+                      options.typeService === 'complet') &&
+                      moduleNames.length > 0 && (
+                        <div className="text-xs text-white/70 pl-2 space-y-1 mt-1">
+                          {moduleNames.map((name, idx) => (
+                            <div key={idx} className="flex gap-2 items-center">
+                              <span className="text-[#71717a] w-16">
+                                Module {idx + 1}
+                              </span>
+                              <span className="text-white/80">
+                                {name || `Module ${idx + 1}`}
+                              </span>
+                            </div>
+                          ))}
                         </div>
                       )}
 
@@ -1675,24 +1292,27 @@ export const Devis = () => {
                     </div>
                   </div>
 
-                  <Button
-                    variant="primary"
-                    size="lg"
-                    className="w-full"
-                    onClick={genererPDF}
-                  >
-                    Télécharger le devis (PDF)
-                  </Button>
-                  <Button variant="outline" size="lg" className="w-full">
-                    Demander un devis personnalisé
-                  </Button>
-                  <div className="text-center text-xs text-[#71717a] pt-4 border-t border-white/10">
-                    <p>Ce devis est une estimation calculée en temps réel.</p>
-                    <p className="mt-1">
-                      Un devis personnalisé sera établi après analyse de vos
-                      besoins.
-                    </p>
-                  </div>
+                  {!isExporting && (
+                    <>
+                      <Button
+                        variant="primary"
+                        size="lg"
+                        className="w-full"
+                        onClick={genererPDF}
+                      >
+                        Télécharger le devis (PDF)
+                      </Button>
+                      <div className="text-center text-xs text-[#71717a] pt-4 border-t border-white/10">
+                        <p>
+                          Ce devis est une estimation calculée en temps réel.
+                        </p>
+                        <p className="mt-1">
+                          Un devis personnalisé sera établi après analyse de vos
+                          besoins.
+                        </p>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
