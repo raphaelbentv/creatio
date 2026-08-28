@@ -6,7 +6,7 @@ const columns = [
     links: [
       { to: '/services', label: 'Nos services' },
       { to: '/avantages', label: 'Les points forts' },
-      { to: '/devis', label: 'Simulateur de devis' },
+      { to: '/devis', label: 'Calculer le devis' },
     ],
   },
   {
