@@ -8,7 +8,10 @@ interface EchantillonModalProps {
   onClose: () => void;
 }
 
-export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => {
+export const EchantillonModal = ({
+  isOpen,
+  onClose,
+}: EchantillonModalProps) => {
   const [formData, setFormData] = useState({
     nom: '',
     prenom: '',
@@ -28,7 +31,9 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     setFormData({
       ...formData,
@@ -50,8 +55,8 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
       // Si les clés ne sont pas configurées, on utilise le mode simulation
       if (!serviceId || !templateId || !publicKey) {
         console.warn('EmailJS non configuré - Mode simulation activé');
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log('Demande d\'échantillon soumise (simulation):', formData);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        console.log("Demande d'échantillon soumise (simulation):", formData);
       } else {
         // Envoi réel via EmailJS
         const templateParams = {
@@ -64,7 +69,8 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
           nombre_etudiants: formData.nombreEtudiants || 'Non renseigné',
           nombre_heures: formData.nombreHeures,
           format_souhaite: formData.formatSouhaite,
-          besoins_specifiques: formData.besoinsSpecifiques || 'Aucun besoin spécifique',
+          besoins_specifiques:
+            formData.besoinsSpecifiques || 'Aucun besoin spécifique',
           to_email: 'contact@creatio.paris', // Email de destination
         };
 
@@ -94,8 +100,10 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
         });
       }, 2000);
     } catch (err) {
-      console.error('Erreur lors de l\'envoi:', err);
-      setError('Une erreur est survenue lors de l\'envoi. Veuillez réessayer ou nous contacter directement.');
+      console.error("Erreur lors de l'envoi:", err);
+      setError(
+        "Une erreur est survenue lors de l'envoi. Veuillez réessayer ou nous contacter directement."
+      );
       setIsSubmitting(false);
     }
   };
@@ -104,9 +112,9 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
     return (
       <Modal isOpen={isOpen} onClose={onClose} size="md">
         <div className="text-center py-8">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#8a5cf6] to-[#6366f1] flex items-center justify-center">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-brand flex items-center justify-center">
             <svg
-              className="w-10 h-10 text-white"
+              className="w-10 h-10 text-ink"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -119,9 +127,12 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
               />
             </svg>
           </div>
-          <h3 className="text-2xl font-bold text-white mb-3">Demande envoyée !</h3>
-          <p className="text-[#71717a]">
-            Nous vous enverrons un échantillon personnalisé dans les plus brefs délais.
+          <h3 className="text-2xl font-bold text-ink mb-3">
+            Demande envoyée !
+          </h3>
+          <p className="text-ink-3">
+            Nous vous enverrons un échantillon personnalisé dans les plus brefs
+            délais.
           </p>
         </div>
       </Modal>
@@ -129,19 +140,30 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Demander un échantillon" size="lg">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Demander un échantillon"
+      size="lg"
+    >
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-[rgba(138,92,246,0.05)] border border-[rgba(138,92,246,0.2)] rounded-xl p-4 mb-6">
-          <p className="text-sm text-white/80 leading-relaxed">
-            <span className="text-[#8a5cf6] font-bold">Gratuit et sans engagement</span> - 
-            Recevez un extrait de cours personnalisé selon vos besoins. 
-            Indiquez-nous quelques détails et nous vous préparerons un échantillon adapté à votre contexte.
+        <div className="bg-brand-soft border border-line rounded-xl p-4 mb-6">
+          <p className="text-sm text-ink-2 leading-relaxed">
+            <span className="text-brand-ink font-bold">
+              Gratuit et sans engagement
+            </span>{' '}
+            - Recevez un extrait de cours personnalisé selon vos besoins.
+            Indiquez-nous quelques détails et nous vous préparerons un
+            échantillon adapté à votre contexte.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="nom" className="block text-sm font-semibold text-white/90 mb-2">
+            <label
+              htmlFor="nom"
+              className="block text-sm font-semibold text-ink-2 mb-2"
+            >
               Nom *
             </label>
             <input
@@ -151,13 +173,16 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
               required
               value={formData.nom}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-[#0f0f12] border border-white/10 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#8a5cf6] transition-colors"
+              className="field"
               placeholder="Dupont"
             />
           </div>
 
           <div>
-            <label htmlFor="prenom" className="block text-sm font-semibold text-white/90 mb-2">
+            <label
+              htmlFor="prenom"
+              className="block text-sm font-semibold text-ink-2 mb-2"
+            >
               Prénom *
             </label>
             <input
@@ -167,7 +192,7 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
               required
               value={formData.prenom}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-[#0f0f12] border border-white/10 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#8a5cf6] transition-colors"
+              className="field"
               placeholder="Jean"
             />
           </div>
@@ -175,7 +200,10 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-semibold text-white/90 mb-2">
+            <label
+              htmlFor="email"
+              className="block text-sm font-semibold text-ink-2 mb-2"
+            >
               Email *
             </label>
             <input
@@ -185,13 +213,16 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
               required
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-[#0f0f12] border border-white/10 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#8a5cf6] transition-colors"
+              className="field"
               placeholder="jean.dupont@exemple.fr"
             />
           </div>
 
           <div>
-            <label htmlFor="telephone" className="block text-sm font-semibold text-white/90 mb-2">
+            <label
+              htmlFor="telephone"
+              className="block text-sm font-semibold text-ink-2 mb-2"
+            >
               Téléphone
             </label>
             <input
@@ -200,7 +231,7 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
               name="telephone"
               value={formData.telephone}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-[#0f0f12] border border-white/10 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#8a5cf6] transition-colors"
+              className="field"
               placeholder="06 12 34 56 78"
             />
           </div>
@@ -208,7 +239,10 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="organisation" className="block text-sm font-semibold text-white/90 mb-2">
+            <label
+              htmlFor="organisation"
+              className="block text-sm font-semibold text-ink-2 mb-2"
+            >
               Organisation *
             </label>
             <input
@@ -218,13 +252,16 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
               required
               value={formData.organisation}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-[#0f0f12] border border-white/10 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#8a5cf6] transition-colors"
+              className="field"
               placeholder="Ex: École de commerce, Université Paris, Centre de formation professionnelle..."
             />
           </div>
 
           <div>
-            <label htmlFor="fonction" className="block text-sm font-semibold text-white/90 mb-2">
+            <label
+              htmlFor="fonction"
+              className="block text-sm font-semibold text-ink-2 mb-2"
+            >
               Fonction
             </label>
             <input
@@ -233,7 +270,7 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
               name="fonction"
               value={formData.fonction}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-[#0f0f12] border border-white/10 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#8a5cf6] transition-colors"
+              className="field"
               placeholder="Ex: Formateur en marketing, Directeur pédagogique, Responsable formation..."
             />
           </div>
@@ -241,7 +278,10 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label htmlFor="domaine" className="block text-sm font-semibold text-white/90 mb-2">
+            <label
+              htmlFor="domaine"
+              className="block text-sm font-semibold text-ink-2 mb-2"
+            >
               Domaine d'enseignement *
             </label>
             <input
@@ -251,13 +291,16 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
               required
               value={formData.domaine}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-[#0f0f12] border border-white/10 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#8a5cf6] transition-colors"
+              className="field"
               placeholder="Ex: Marketing digital, Management d'équipe, Développement web..."
             />
           </div>
 
           <div>
-            <label htmlFor="nombreEtudiants" className="block text-sm font-semibold text-white/90 mb-2">
+            <label
+              htmlFor="nombreEtudiants"
+              className="block text-sm font-semibold text-ink-2 mb-2"
+            >
               Nombre d'étudiants (approximatif)
             </label>
             <input
@@ -266,14 +309,17 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
               name="nombreEtudiants"
               value={formData.nombreEtudiants}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-[#0f0f12] border border-white/10 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#8a5cf6] transition-colors"
+              className="field"
               placeholder="Ex: 30 étudiants par promotion, 150 au total..."
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="nombreHeures" className="block text-sm font-semibold text-white/90 mb-2">
+          <label
+            htmlFor="nombreHeures"
+            className="block text-sm font-semibold text-ink-2 mb-2"
+          >
             Nombre d'heures à couvrir par l'échantillon *
           </label>
           <input
@@ -283,13 +329,16 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
             required
             value={formData.nombreHeures}
             onChange={handleChange}
-            className="w-full px-4 py-3 bg-[#0f0f12] border border-white/10 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#8a5cf6] transition-colors"
+            className="field"
             placeholder="Ex: 2h de cours sur l'introduction au marketing, 1h sur les bases du management..."
           />
         </div>
 
         <div>
-          <label htmlFor="formatSouhaite" className="block text-sm font-semibold text-white/90 mb-2">
+          <label
+            htmlFor="formatSouhaite"
+            className="block text-sm font-semibold text-ink-2 mb-2"
+          >
             Format souhaité *
           </label>
           <select
@@ -298,7 +347,7 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
             required
             value={formData.formatSouhaite}
             onChange={handleChange}
-            className="w-full px-4 py-3 bg-[#0f0f12] border border-white/10 rounded-xl text-white focus:outline-none focus:border-[#8a5cf6] transition-colors"
+            className="w-full px-4 py-3 bg-surface border border-line rounded-xl text-ink focus:outline-none focus:border-brand transition-colors"
           >
             <option value="ppt">PowerPoint (PPT)</option>
             <option value="pdf">PDF</option>
@@ -307,7 +356,10 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
         </div>
 
         <div>
-          <label htmlFor="besoinsSpecifiques" className="block text-sm font-semibold text-white/90 mb-2">
+          <label
+            htmlFor="besoinsSpecifiques"
+            className="block text-sm font-semibold text-ink-2 mb-2"
+          >
             Besoins spécifiques ou contexte
           </label>
           <textarea
@@ -316,7 +368,7 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
             rows={4}
             value={formData.besoinsSpecifiques}
             onChange={handleChange}
-            className="w-full px-4 py-3 bg-[#0f0f12] border border-white/10 rounded-xl text-white placeholder-[#71717a] focus:outline-none focus:border-[#8a5cf6] transition-colors resize-vertical"
+            className="field resize-y"
             placeholder="Ex: Cours niveau débutant, focus sur les cas pratiques, intégration d'exemples concrets, approche interactive..."
           />
         </div>
@@ -344,17 +396,16 @@ export const EchantillonModal = ({ isOpen, onClose }: EchantillonModalProps) => 
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
-            <p className="text-sm text-red-400">{error}</p>
+          <div className="bg-danger-bg border border-danger rounded-xl p-4">
+            <p className="text-sm text-danger">{error}</p>
           </div>
         )}
 
-        <p className="text-xs text-[#71717a] text-center pt-2">
-          En soumettant ce formulaire, vous acceptez d'être contacté par notre équipe.
-          Vos données sont traitées de manière confidentielle.
+        <p className="text-xs text-ink-3 text-center pt-2">
+          En soumettant ce formulaire, vous acceptez d'être contacté par notre
+          équipe. Vos données sont traitées de manière confidentielle.
         </p>
       </form>
     </Modal>
   );
 };
-

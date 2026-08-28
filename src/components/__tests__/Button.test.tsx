@@ -11,7 +11,6 @@ describe('Button', () => {
   it('applies variant classes', () => {
     const { container } = render(<Button variant="primary">Primary</Button>);
     const button = container.firstChild as HTMLElement;
-    expect(button.className).toContain('bg-blue-600');
+    expect(button.className).toContain('btn-primary');
   });
 });
-

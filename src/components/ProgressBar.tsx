@@ -4,18 +4,27 @@ interface ProgressBarProps {
   className?: string;
 }
 
-export const ProgressBar = ({ value, max = 100, className = '' }: ProgressBarProps) => {
+/* `block` explicite sur la barre ET sur son remplissage : sur un élément
+   inline, `height` est ignoré et la jauge disparaît sans lever d'erreur. */
+export const ProgressBar = ({
+  value,
+  max = 100,
+  className = '',
+}: ProgressBarProps) => {
   const percentage = Math.min((value / max) * 100, 100);
 
   return (
-    <div className={`w-full h-2.5 bg-[#0f0f12] rounded-full overflow-hidden mt-4 border border-white/4 ${className}`}>
-      <div
-        className="h-full gradient-purple rounded-full transition-all duration-600 relative overflow-hidden"
+    <div
+      className={`block w-full h-1.5 rounded-full bg-surface-soft border border-line overflow-hidden ${className}`.trim()}
+      role="progressbar"
+      aria-valuenow={value}
+      aria-valuemin={0}
+      aria-valuemax={max}
+    >
+      <span
+        className="block h-full rounded-full bg-brand"
         style={{ width: `${percentage}%` }}
-      >
-        <div className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-r from-transparent via-white/15 to-transparent shimmer"></div>
-      </div>
+      />
     </div>
   );
 };
-

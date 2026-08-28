@@ -1,27 +1,60 @@
 interface GaugeProps {
   value: number;
   label?: string;
+  size?: number;
 }
 
-export const Gauge = ({ value, label }: GaugeProps) => {
+/* Anneau de progression.
+   Le libellé est posé SOUS l'anneau, jamais dedans : à 88px de diamètre
+   extérieur, le disque intérieur fait 74px et n'accueille pas deux lignes
+   (contrainte relevée sur les maquettes d'Arrow). */
+export const Gauge = ({ value, label, size = 88 }: GaugeProps) => {
+  const radius = 40;
+  const circumference = 2 * Math.PI * radius;
+  const clamped = Math.min(Math.max(value, 0), 100);
+
   return (
-    <div className="flex flex-col items-center gap-5">
-      <div className="relative w-40 h-40">
-        <div 
-          className="absolute w-full h-full rounded-full"
+    <div className="flex flex-col items-center gap-2">
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 100 100"
+        role="img"
+        aria-label={label ? `${label} : ${clamped} %` : `${clamped} %`}
+      >
+        <circle
+          cx="50"
+          cy="50"
+          r={radius}
+          fill="none"
+          stroke="var(--surface-soft)"
+          strokeWidth="11"
+        />
+        <circle
+          cx="50"
+          cy="50"
+          r={radius}
+          fill="none"
+          stroke="var(--brand)"
+          strokeWidth="11"
+          strokeLinecap="round"
+          strokeDasharray={`${(circumference * clamped) / 100} ${circumference}`}
+          transform="rotate(-90 50 50)"
+        />
+        <text
+          x="50"
+          y="56"
+          textAnchor="middle"
+          className="tabular"
           style={{
-            background: 'conic-gradient(from 180deg, #8a5cf6 0deg, #6366f1 60deg, #4f46e5 120deg, #1a1a1f 120deg, #0f0f12 360deg)',
-            mask: 'radial-gradient(circle, transparent 58%, black 58%)',
-            WebkitMask: 'radial-gradient(circle, transparent 58%, black 58%)',
+            font: '700 24px var(--sans)',
+            fill: 'var(--ink)',
           }}
-        ></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] h-[85%] rounded-full bg-gradient-to-br from-[#18181b] to-[#0f0f12]"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[42px] font-extrabold text-white z-10 tracking-tight">
-          {value}%
-        </div>
-      </div>
-      {label && <div className="text-[#71717a] text-[13px] font-medium">{label}</div>}
+        >
+          {clamped}%
+        </text>
+      </svg>
+      {label && <div className="t-caption text-center">{label}</div>}
     </div>
   );
 };
-

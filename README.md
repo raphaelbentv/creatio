@@ -21,6 +21,7 @@ Une application React moderne avec TypeScript, Vite, Tailwind CSS et une structu
 creatio/
 ├── src/
 │   ├── components/       # Composants réutilisables
+│   ├── content/         # Contenu du site (services, points forts, FAQ…)
 │   ├── pages/           # Pages de l'application
 │   ├── hooks/           # Hooks personnalisés
 │   ├── utils/           # Fonctions utilitaires
@@ -35,6 +36,29 @@ creatio/
 ├── index.html           # Template HTML
 └── package.json         # Dépendances
 ```
+
+## 🎨 Design system
+
+Le site suit le **thème pro** d'Arrow (`frontend/src/styles/classic/`), décliné sur
+l'accent **violet `#7c3aed`** — la couleur historique de Creatio, dans le traitement
+d'Arrow. Les jetons vivent en tête de `src/index.css` et alimentent aussi les
+utilitaires Tailwind (`bg-surface`, `text-ink-2`, `border-line`…).
+
+Cinq règles, reprises telles quelles de la doctrine d'Arrow :
+
+1. **Aucun dégradé.** L'accent se pose en aplat.
+2. **Une seule ombre**, `--shadow`, jamais cumulée.
+3. **Rayon 8 px**, sauf les tuiles de la page d'accueil à 22 px.
+4. **Pile système**, aucun webfont.
+5. **`--brand-ink` est le seul jeton d'accent à poser en `color:`.** Peindre du texte
+   avec `--brand` emploie l'aplat comme encre et passe sous le seuil AA.
+
+L'échelle typographique tient en six tailles (12 · 13 · 14 · 16 · 20 · 28), plus
+`--type-hero` à 52 px réservé au H1 de la page d'accueil. L'espacement suit une seule
+grille : 8 / 16 / 24 / 32, soit `p-2` / `p-4` / `p-6` / `p-8` en Tailwind.
+
+La **peau sombre** est définie (`html[data-theme="dark"]`) mais pas activée : le site
+sert la peau claire. La brancher sur `prefers-color-scheme` ne demande qu'une règle.
 
 ## 🛠️ Installation
 
@@ -97,6 +121,7 @@ Le projet utilise des alias pour simplifier les imports :
 - `@/context` → `./src/context`
 
 Exemple d'utilisation :
+
 ```typescript
 import { Button } from '@/components/Button';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
@@ -181,7 +206,7 @@ Le site est déployé automatiquement sur **creatio.paris** via GitHub Pages à 
    - Ajoutez un enregistrement pour `creatio.paris` :
      - **Type** : `A` (ou `CNAME` vers `raphaelbentv.github.io`)
      - **Nom** : `creatio` (ou `@` si c'est le domaine racine)
-     - **Valeur** : 
+     - **Valeur** :
        - Pour `A` : `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
        - Pour `CNAME` : `raphaelbentv.github.io`
    - Attendez la propagation DNS (peut prendre jusqu'à 48h, généralement quelques minutes)
@@ -193,6 +218,7 @@ Le site est déployé automatiquement sur **creatio.paris** via GitHub Pages à 
 ### Déploiement manuel
 
 Si vous souhaitez déclencher un déploiement manuellement :
+
 - Allez dans l'onglet **Actions** de votre dépôt GitHub
 - Sélectionnez le workflow "Déploiement sur GitHub Pages"
 - Cliquez sur **Run workflow**
@@ -200,6 +226,7 @@ Si vous souhaitez déclencher un déploiement manuellement :
 ### Workflow de déploiement
 
 Le workflow (`.github/workflows/deploy.yml`) :
+
 - ✅ Se déclenche automatiquement à chaque push sur `main`
 - ✅ Build l'application avec `npm run build`
 - ✅ Déploie automatiquement sur GitHub Pages

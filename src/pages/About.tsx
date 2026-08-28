@@ -1,161 +1,190 @@
-import { Card, CardHeader } from '@/components/Card';
-import { Badge } from '@/components/Badge';
-import { StatsCard } from '@/components/StatsCard';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/Button';
+import { Icon, IconName } from '@/components/Icon';
+
+/* Les émojis qui servaient de puces sont remplacés par les icônes du système :
+   un émoji se rend différemment selon la plateforme et n'obéit ni à l'accent
+   ni à la peau. */
+const values: { icon: IconName; title: string; description: string }[] = [
+  {
+    icon: 'clipboard',
+    title: 'Excellence pédagogique',
+    description:
+      'Nous créons des supports de qualité qui respectent les standards pédagogiques les plus élevés.',
+  },
+  {
+    icon: 'document',
+    title: 'Partenariat durable',
+    description:
+      'Nous construisons des relations de confiance avec nos clients pour un accompagnement sur le long terme.',
+  },
+  {
+    icon: 'sparkle',
+    title: 'Innovation constante',
+    description:
+      'Nous intégrons les dernières évolutions technologiques et pédagogiques dans nos créations.',
+  },
+  {
+    icon: 'check-circle',
+    title: 'Conformité garantie',
+    description:
+      'Tous nos supports sont conçus pour répondre aux exigences Qualiopi et aux référentiels en vigueur.',
+  },
+];
+
+const team = [
+  {
+    name: 'Équipe pédagogique',
+    role: 'Création de contenus',
+    description:
+      'Experts en pédagogie et en création de supports de formation.',
+  },
+  {
+    name: 'Équipe technique',
+    role: 'Développement & design',
+    description:
+      'Spécialistes en design graphique et en développement de solutions digitales.',
+  },
+  {
+    name: 'Équipe qualité',
+    role: 'Conformité & audit',
+    description:
+      'Garante de la conformité Qualiopi et de la qualité des livrables.',
+  },
+];
+
+const chiffres = [
+  { value: '50+', label: 'Établissements accompagnés' },
+  { value: '500+', label: 'Supports créés' },
+  { value: '100 %', label: 'Conformité Qualiopi' },
+  { value: '24/7', label: 'Support disponible' },
+];
+
+const raisons = [
+  {
+    title: 'Gain de temps significatif',
+    description:
+      "Libérez vos équipes de la production de contenus pour qu'elles se concentrent sur l'accompagnement pédagogique et la coordination des formations.",
+  },
+  {
+    title: 'Qualité professionnelle',
+    description:
+      "Des supports créés par des experts pédagogiques, conformes aux référentiels et prêts à l'emploi.",
+  },
+  {
+    title: 'Rentabilité optimale',
+    description:
+      'Des supports réutilisables sur plusieurs années, facilement actualisables, pour un retour sur investissement optimal.',
+  },
+  {
+    title: 'Accompagnement personnalisé',
+    description:
+      'Un suivi dédié et des mises à jour annuelles pour garantir la pertinence continue de vos supports pédagogiques.',
+  },
+];
 
 export const About = () => {
-  const values = [
-    {
-      icon: '🎯',
-      title: 'Excellence pédagogique',
-      description:
-        'Nous créons des supports de qualité qui respectent les standards pédagogiques les plus élevés.',
-    },
-    {
-      icon: '🤝',
-      title: 'Partenariat durable',
-      description:
-        'Nous construisons des relations de confiance avec nos clients pour un accompagnement sur le long terme.',
-    },
-    {
-      icon: '💡',
-      title: 'Innovation constante',
-      description:
-        'Nous intégrons les dernières évolutions technologiques et pédagogiques dans nos créations.',
-    },
-    {
-      icon: '✅',
-      title: 'Conformité garantie',
-      description:
-        'Tous nos supports sont conçus pour répondre aux exigences Qualiopi et aux référentiels en vigueur.',
-    },
-  ];
-
-  const team = [
-    {
-      name: 'Équipe pédagogique',
-      role: 'Création de contenus',
-      description: 'Experts en pédagogie et en création de supports de formation',
-    },
-    {
-      name: 'Équipe technique',
-      role: 'Développement & Design',
-      description: 'Spécialistes en design graphique et en développement de solutions digitales',
-    },
-    {
-      name: 'Équipe qualité',
-      role: 'Conformité & Audit',
-      description: 'Garant de la conformité Qualiopi et de la qualité des livrables',
-    },
-  ];
-
   return (
-    <div className="pt-[120px] pb-10 px-5 min-h-screen">
-      <div className="max-w-[1400px] mx-auto">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-white mb-6">À propos de Creatio</h1>
-          <p className="text-xl text-[#6b6b7a] mb-8 max-w-3xl mx-auto">
-            Creatio accompagne les établissements d'enseignement supérieur et les CFA dans la
-            création de supports pédagogiques structurés et de qualité.
+    <div className="shell py-12">
+      <header className="max-w-[62ch]">
+        <span className="t-eyebrow">Qui nous sommes</span>
+        <h1 className="t-page mt-3">À propos de Creatio</h1>
+        <p className="t-body mt-3">
+          Creatio accompagne les établissements d’enseignement supérieur et les
+          CFA dans la création de supports pédagogiques structurés et de
+          qualité.
+        </p>
+      </header>
+
+      <section className="surface mt-8 p-6">
+        <h2 className="t-section">Notre mission</h2>
+        <div className="mt-4 flex flex-col gap-4 max-w-[68ch]">
+          <p className="t-body">
+            Creatio s’engage à libérer les établissements de formation de la
+            charge de production de contenus pédagogiques, pour qu’ils se
+            concentrent sur leur cœur de métier : l’accompagnement et la
+            formation des apprenants.
+          </p>
+          <p className="t-body">
+            Nous créons des supports structurés, clairs et directement
+            exploitables par les étudiants comme par les intervenants, en
+            respectant les indispensables de la formation et en intégrant les
+            aspects modernes des différentes disciplines.
           </p>
         </div>
+      </section>
 
-        {/* Mission */}
-        <Card size="wide" className="mb-12">
-          <CardHeader title="Notre mission" />
-          <div className="space-y-4">
-            <p className="text-white/80 text-lg leading-relaxed">
-              Depuis notre création, Creatio s'engage à libérer les établissements de formation de
-              la charge de production de contenus pédagogiques, leur permettant de se concentrer sur
-              leur cœur de métier : l'accompagnement et la formation des apprenants.
-            </p>
-            <p className="text-white/80 text-lg leading-relaxed">
-              Nous créons des supports pédagogiques structurés, clairs et directement exploitables
-              par les étudiants et les intervenants, en respectant les indispensables de la
-              formation et en intégrant les aspects modernes des différentes disciplines.
-            </p>
-          </div>
-        </Card>
-
-        {/* Valeurs */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-white mb-8 text-center">Nos valeurs</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value, index) => (
-              <Card key={index} size="square">
-                <div className="text-4xl mb-4">{value.icon}</div>
-                <h3 className="text-lg font-bold text-white mb-3">{value.title}</h3>
-                <p className="text-white/70 text-sm">{value.description}</p>
-              </Card>
-            ))}
-          </div>
+      <section className="mt-8">
+        <h2 className="t-section">Nos valeurs</h2>
+        <div className="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {values.map(value => (
+            <article
+              key={value.title}
+              className="surface p-6 flex flex-col gap-3"
+            >
+              <span className="w-10 h-10 rounded bg-brand-soft text-brand-ink flex items-center justify-center">
+                <Icon name={value.icon} />
+              </span>
+              <h3 className="t-label">{value.title}</h3>
+              <p className="t-meta">{value.description}</p>
+            </article>
+          ))}
         </div>
+      </section>
 
-        {/* Statistiques */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-          <Card size="tiny">
-            <StatsCard value="50+" label="Établissements accompagnés" />
-          </Card>
-          <Card size="tiny">
-            <StatsCard value="500+" label="Supports créés" />
-          </Card>
-          <Card size="tiny">
-            <StatsCard value="100%" label="Conformité Qualiopi" />
-          </Card>
-          <Card size="tiny">
-            <StatsCard value="24/7" label="Support disponible" />
-          </Card>
+      <section className="surface mt-8 overflow-hidden">
+        <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-line">
+          {chiffres.map(chiffre => (
+            <div key={chiffre.label} className="p-6">
+              <div className="text-[34px] font-bold leading-none tracking-tight tabular">
+                {chiffre.value}
+              </div>
+              <div className="t-meta mt-2">{chiffre.label}</div>
+            </div>
+          ))}
         </div>
+      </section>
 
-        {/* Équipe */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-white mb-8 text-center">Notre organisation</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {team.map((member, index) => (
-              <Card key={index} size="square">
-                <CardHeader title={member.name} />
-                <Badge className="mb-4">{member.role}</Badge>
-                <p className="text-white/70 text-sm">{member.description}</p>
-              </Card>
-            ))}
-          </div>
+      <section className="mt-8">
+        <h2 className="t-section">Notre organisation</h2>
+        <div className="mt-4 grid gap-4 md:grid-cols-3">
+          {team.map(member => (
+            <article
+              key={member.name}
+              className="surface p-6 flex flex-col gap-3 items-start"
+            >
+              <h3 className="t-label">{member.name}</h3>
+              <span className="badge">{member.role}</span>
+              <p className="t-meta">{member.description}</p>
+            </article>
+          ))}
         </div>
+      </section>
 
-        {/* Pourquoi nous choisir */}
-        <Card size="wide">
-          <CardHeader title="Pourquoi choisir Creatio ?" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-xl font-bold text-white mb-4">Gain de temps significatif</h3>
-              <p className="text-white/80 text-sm mb-4">
-                Libérez vos équipes de la production de contenus pour qu'elles se concentrent sur
-                l'accompagnement pédagogique et la coordination des formations.
-              </p>
+      <section className="surface mt-8 p-6">
+        <h2 className="t-section">Pourquoi choisir Creatio ?</h2>
+        <div className="mt-4 grid gap-6 md:grid-cols-2">
+          {raisons.map(raison => (
+            <div key={raison.title}>
+              <h3 className="t-label">{raison.title}</h3>
+              <p className="t-meta mt-2 max-w-[52ch]">{raison.description}</p>
             </div>
-            <div>
-              <h3 className="text-xl font-bold text-white mb-4">Qualité professionnelle</h3>
-              <p className="text-white/80 text-sm mb-4">
-                Des supports créés par des experts pédagogiques, conformes aux référentiels et
-                prêts à l'emploi.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-white mb-4">Rentabilité optimale</h3>
-              <p className="text-white/80 text-sm mb-4">
-                Des supports réutilisables sur plusieurs années, facilement actualisables, pour un
-                retour sur investissement optimal.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-white mb-4">Accompagnement personnalisé</h3>
-              <p className="text-white/80 text-sm mb-4">
-                Un suivi dédié et des mises à jour annuelles pour garantir la pertinence continue
-                de vos supports pédagogiques.
-              </p>
-            </div>
-          </div>
-        </Card>
-      </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="surface mt-8 p-6 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="t-label">Parlons de votre programme</h2>
+          <p className="t-meta max-w-[52ch]">
+            Un échange de trente minutes suffit pour savoir si nous sommes le
+            bon partenaire.
+          </p>
+        </div>
+        <Link to="/contact">
+          <Button variant="primary">Nous contacter</Button>
+        </Link>
+      </section>
     </div>
   );
 };

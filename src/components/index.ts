@@ -13,4 +13,7 @@ export { Icon3D } from './Icon3D';
 export { GraphLine } from './GraphLine';
 export { Modal } from './Modal';
 export { EchantillonModal } from './EchantillonModal';
+export { Faq } from './Faq';
+export { Icon } from './Icon';
+export type { IconName } from './Icon';
 
