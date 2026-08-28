@@ -148,7 +148,7 @@ export const Home = () => {
               to="/devis"
               className="btn bg-surface text-brand-ink hover:bg-surface-soft mt-1"
             >
-              Ouvrir le simulateur
+              Calculer le devis
             </Link>
           </section>
 

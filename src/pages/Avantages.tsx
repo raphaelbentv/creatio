@@ -72,7 +72,7 @@ export const Avantages = () => {
           </p>
         </div>
         <Link to="/devis">
-          <Button variant="primary">Ouvrir le simulateur</Button>
+          <Button variant="primary">Calculer le devis</Button>
         </Link>
       </section>
     </div>

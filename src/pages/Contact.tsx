@@ -329,7 +329,7 @@ export const Contact = () => {
               minutes.
             </p>
             <Link to="/devis" className="btn btn-outline btn-sm">
-              Ouvrir le simulateur
+              Calculer le devis
             </Link>
           </section>
         </aside>
