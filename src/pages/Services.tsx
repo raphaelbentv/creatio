@@ -57,7 +57,7 @@ export const Services = () => {
               Demander un échantillon
             </Button>
             <Link to="/devis">
-              <Button variant="primary">Obtenir un devis</Button>
+              <Button variant="primary">Calculer le devis</Button>
             </Link>
           </div>
         </section>

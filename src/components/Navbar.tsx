@@ -86,7 +86,7 @@ export const Navbar = () => {
             </Button>
             <Link to="/devis">
               <Button variant="primary" size="sm">
-                Obtenir un devis
+                Calculer le devis
               </Button>
             </Link>
           </div>
@@ -149,7 +149,7 @@ export const Navbar = () => {
                 </Button>
                 <Link to="/devis" onClick={() => setMobileMenuOpen(false)}>
                   <Button variant="primary" className="w-full">
-                    Obtenir un devis
+                    Calculer le devis
                   </Button>
                 </Link>
               </div>

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Creatio</title>
+    <script>
+      /* GitHub Pages ne connaît pas les routes d'une application monopage : il
+         sert ce fichier pour toute URL autre que la racine. On réécrit le
+         chemin en paramètre de requête — /services devient /?/services — pour
+         atteindre index.html, qui restaure l'URL d'origine au démarrage
+         (script jumeau dans index.html ; les deux doivent rester synchrones).
+
+         Le site est servi à la racine du domaine creatio.paris : aucun segment
+         de préfixe à préserver, contrairement à un dépôt de projet servi sous
+         /nom-du-depot/.
+
+         Les « & » du chemin et de la requête sont échappés en « ~and~ », sans
+         quoi ils couperaient le paramètre que l'on vient de construire. */
+      (function (l) {
+        l.replace(
+          l.protocol +
+            '//' +
+            l.host +
+            '/?/' +
+            l.pathname.slice(1).replace(/&/g, '~and~') +
+            (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+            l.hash
+        );
+      })(window.location);
+    </script>
+  </head>
+  <body>
+    <p>
+      Redirection en cours…
+      <a href="/">Revenir à l’accueil de Creatio</a>
+    </p>
+  </body>
+</html>

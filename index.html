@@ -23,6 +23,28 @@
     />
     <meta property="og:type" content="website" />
     <title>Creatio - Vos cours, prêts. Vos apprenants, engagés.</title>
+    <script>
+      /* Jumeau du script de public/404.html : GitHub Pages nous a renvoyé
+         /?/services au lieu de /services, on remet l'URL d'origine dans la
+         barre d'adresse AVANT que React Router ne lise l'emplacement.
+         Les deux fichiers doivent rester synchrones. */
+      (function (l) {
+        if (l.search[1] === '/') {
+          var route = l.search
+            .slice(1)
+            .split('&')
+            .map(function (part) {
+              return part.replace(/~and~/g, '&');
+            })
+            .join('?');
+          window.history.replaceState(
+            null,
+            null,
+            l.pathname.slice(0, -1) + route + l.hash
+          );
+        }
+      })(window.location);
+    </script>
   </head>
   <body>
     <div id="root"></div>
